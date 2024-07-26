@@ -1,15 +1,15 @@
-import express, { Request, Response } from "express";
-import cors from "cors";
-import "dotenv/config";
-import mongoose from "mongoose";
-import userRoutes from "./routes/users";
-import authRoutes from "./routes/auth";
-import cookieParser from "cookie-parser";
-import path from "path";
-import { v2 as cloudinary } from "cloudinary"; // v2 is a SDK
-import myHotelRoutes from "./routes/my-hostels";
-import hotelRoutes from "./routes/hotels"
-import bookingRoutes from "./routes/my-bookings"
+import express, { Request, Response } from 'express';
+import cors from 'cors';
+import 'dotenv/config';
+import mongoose from 'mongoose';
+import userRoutes from './routes/users';
+import authRoutes from './routes/auth';
+import cookieParser from 'cookie-parser';
+import path from 'path';
+import { v2 as cloudinary } from 'cloudinary'; // v2 is a SDK
+import myHotelRoutes from './routes/my-hostels';
+import hotelRoutes from './routes/hotels';
+import bookingRoutes from './routes/my-bookings';
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -30,18 +30,17 @@ app.use(
   })
 ); // browser prevents frontend on backend run on different ports
 
-app.use(express.static(path.join(__dirname, "../../frontend/dist"))); // express can serve static assets
-app.use("/api/auth", authRoutes);
-app.use("/api/users", userRoutes);
-app.use("/api/my-hotels", myHotelRoutes);
-app.use("/api/hotels", hotelRoutes);
-app.use("/api/my-bookings", bookingRoutes);
+app.use(express.static(path.join(__dirname, '../../frontend/dist'))); // express can serve static assets
+app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/my-hotels', myHotelRoutes);
+app.use('/api/hotels', hotelRoutes);
+app.use('/api/my-bookings', bookingRoutes);
 
-app.get("*", (req: Request, res: Response)=>{
-    res.sendFile(path.join(__dirname, "../../frontend/dist/index.html"))
-})// all the other routes will go to index.html
-
+app.get('*', (req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname, '../../frontend/dist/index.html'));
+}); // all the other routes will go to index.html
 
 app.listen(7000, () => {
-  console.log("Server is running on localhost:7000");
+  console.log('Server is running on localhost:7000');
 });
