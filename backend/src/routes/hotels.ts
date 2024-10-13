@@ -1,34 +1,35 @@
-import express, { Request, Response } from "express";
-import Hotel from "../models/hotel";
-import { BookingType, HotelSearchResponse } from "../shared/types";
-import { param, validationResult } from "express-validator";
-import Stripe from "stripe";
-import verifyToken from "../middlewares/auth";
+import express, { Request, Response } from 'express';
+import { Hotel } from '../models/hotel';
+import { BookingType, HotelSearchResponse } from '../shared/types';
+import { param, validationResult } from 'express-validator';
+import Stripe from 'stripe';
+import verifyToken from '../middlewares/auth';
+import Transaction from '../models/transaction';
 
 const stripe = new Stripe(process.env.STRIPE_API_KEY as string);
 
 const router = express.Router();
 
-router.get("/search", async (req: Request, res: Response) => {
+router.get('/search', async (req: Request, res: Response) => {
   try {
     const query = constructSearchQuery(req.query);
 
     let sortOptions = {};
     switch (req.query.sortOption) {
-      case "starRating":
+      case 'starRating':
         sortOptions = { starRating: -1 };
         break;
-      case "pricePerNightAsc":
+      case 'pricePerNightAsc':
         sortOptions = { pricePerNight: 1 };
         break;
-      case "pricePerNightDesc":
+      case 'pricePerNightDesc':
         sortOptions = { pricePerNight: -1 };
         break;
     }
 
     const pageSize = 5;
     const pageNumber = parseInt(
-      req.query.page ? req.query.page.toString() : "1"
+      req.query.page ? req.query.page.toString() : '1'
     );
     const skip = (pageNumber - 1) * pageSize;
 
@@ -50,24 +51,24 @@ router.get("/search", async (req: Request, res: Response) => {
 
     res.json(response);
   } catch (error) {
-    console.log("error", error);
-    res.status(500).json({ message: "Something went wrong" });
+    console.log('error', error);
+    res.status(500).json({ message: 'Something went wrong' });
   }
 });
 
-router.get("/", async (req: Request, res: Response) => {
+router.get('/', async (req: Request, res: Response) => {
   try {
-    const hotels = await Hotel.find().sort("-lastUpdated");
+    const hotels = await Hotel.find().sort('-lastUpdated');
     res.json(hotels);
   } catch (error) {
-    console.log("error", error);
-    res.status(500).json({ message: "Error fetching hotels" });
+    console.log('error', error);
+    res.status(500).json({ message: 'Error fetching hotels' });
   }
 });
 
 router.get(
-  "/:id",
-  [param("id").notEmpty().withMessage("Hotel ID is required")],
+  '/:id',
+  [param('id').notEmpty().withMessage('Hotel ID is required')],
   async (req: Request, res: Response) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -81,41 +82,41 @@ router.get(
       res.json(hotel);
     } catch (error) {
       console.log(error);
-      res.status(500).json({ message: "Error fetching hotel" });
+      res.status(500).json({ message: 'Error fetching hotel' });
     }
   }
 );
 
 router.post(
-  "/:hotelId/bookings/payment-intent",
+  '/:hotelId/bookings/payment-intent',
   verifyToken,
   async (req: Request, res: Response) => {
     const { numberOfNights } = req.body;
     const hotelId = req.params.hotelId;
     console.log(hotelId);
-    
 
     const hotel = await Hotel.findById(hotelId);
     if (!hotel) {
-      return res.status(400).json({ message: "Hotel not found" });
+      return res.status(400).json({ message: 'Hotel not found' });
     }
 
     let totalCost = hotel.pricePerNight * numberOfNights;
-    if(!numberOfNights) {
+    if (!numberOfNights) {
       totalCost = hotel.pricePerNight;
     }
 
     const paymentIntent = await stripe.paymentIntents.create({
       amount: totalCost * 100,
-      currency: "inr",
+      currency: 'inr',
       metadata: {
         hotelId,
         userId: req.userId,
+        totalAmount: totalCost,
       },
     });
 
     if (!paymentIntent.client_secret) {
-      return res.status(500).json({ message: "Error creating payment intent" });
+      return res.status(500).json({ message: 'Error creating payment intent' });
     }
 
     const response = {
@@ -129,7 +130,7 @@ router.post(
 );
 
 router.post(
-  "/:hotelId/bookings",
+  '/:hotelId/bookings',
   verifyToken,
   async (req: Request, res: Response) => {
     try {
@@ -140,17 +141,17 @@ router.post(
       );
 
       if (!paymentIntent) {
-        return res.status(400).json({ message: "payment intent not found" });
+        return res.status(400).json({ message: 'payment intent not found' });
       }
 
       if (
         paymentIntent.metadata.hotelId !== req.params.hotelId ||
         paymentIntent.metadata.userId !== req.userId
       ) {
-        return res.status(400).json({ message: "payment intent mismatch" });
+        return res.status(400).json({ message: 'payment intent mismatch' });
       }
 
-      if (paymentIntent.status !== "succeeded") {
+      if (paymentIntent.status !== 'succeeded') {
         return res.status(400).json({
           message: `payment intent not succeeded. Status: ${paymentIntent.status}`,
         });
@@ -169,14 +170,23 @@ router.post(
       );
 
       if (!hotel) {
-        return res.status(400).json({ message: "hotel not found" });
+        return res.status(400).json({ message: 'hotel not found' });
       }
-
       await hotel.save();
+
+      const transaction = new Transaction({
+        userId: req.userId,
+        hotelId: hotel._id,
+        totalAmount: paymentIntent.metadata.totalAmount,
+      });
+      await transaction.save();
+
+      console.log(transaction);
+
       res.status(200).send();
     } catch (error) {
       console.log(error);
-      res.status(500).json({ message: "something went wrong" });
+      res.status(500).json({ message: 'something went wrong' });
     }
   }
 );
@@ -186,8 +196,8 @@ const constructSearchQuery = (queryParams: any) => {
 
   if (queryParams.destination) {
     constructedQuery.$or = [
-      { city: new RegExp(queryParams.destination, "i") },
-      { country: new RegExp(queryParams.destination, "i") },
+      { city: new RegExp(queryParams.destination, 'i') },
+      { country: new RegExp(queryParams.destination, 'i') },
     ];
   }
 

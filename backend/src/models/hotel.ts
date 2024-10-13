@@ -1,5 +1,5 @@
-import mongoose from "mongoose";
-import { BookingType, HotelType } from "../shared/types";
+import mongoose from 'mongoose';
+import { BookingType, HotelType } from '../shared/types';
 
 const bookingSchema = new mongoose.Schema<BookingType>({
   firstName: { type: String, required: true },
@@ -30,5 +30,6 @@ const hotelSchema = new mongoose.Schema<HotelType>({
   bookings: [bookingSchema],
 });
 
-const Hotel = mongoose.model<HotelType>("Hotel", hotelSchema);
-export default Hotel;
+const Hotel = mongoose.model<HotelType>('Hotel', hotelSchema);
+
+export { Hotel };

@@ -1,12 +1,12 @@
-import express, { Request, Response } from "express";
-import verifyToken from "../middlewares/auth";
-import Hotel from "../models/hotel";
-import { HotelType } from "../shared/types";
+import express, { Request, Response } from 'express';
+import verifyToken from '../middlewares/auth';
+import { Hotel } from '../models/hotel';
+import { HotelType } from '../shared/types';
 
 const router = express.Router();
 
 // /api/my-bookings
-router.get("/", verifyToken, async (req: Request, res: Response) => {
+router.get('/', verifyToken, async (req: Request, res: Response) => {
   try {
     const hotels = await Hotel.find({
       bookings: { $elemMatch: { userId: req.userId } },
@@ -28,7 +28,7 @@ router.get("/", verifyToken, async (req: Request, res: Response) => {
     res.status(200).send(results);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Unable to fetch bookings" });
+    res.status(500).json({ message: 'Unable to fetch bookings' });
   }
 });
 

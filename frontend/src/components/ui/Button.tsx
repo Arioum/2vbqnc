@@ -7,14 +7,15 @@ interface ButtonProps {
   className?: string;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
   disabled?: boolean;
+  type?: "button" | "submit" | "reset" | undefined;
 }
 
-const Button = ({ variant = "button", children, to, className, onClick, disabled }: ButtonProps) => {
+const Button = ({ variant = "button", children, to, className, onClick, disabled, type }: ButtonProps) => {
   if (variant === "link") {
     return (
       <Link
         to={to || "#"}
-        className={`flex items-center text-[#F9F9F8] px-3 h-full font-bold rounded-[4px] bg-black hover:bg-black ${className}`}
+        className={`flex items-center text-[#F9F9F8] px-3 h-full font-bold rounded-[4px] bg-blue-600 hover:bg-blue-700 ${className}`}
       >
         {children}
       </Link>
@@ -24,7 +25,8 @@ const Button = ({ variant = "button", children, to, className, onClick, disabled
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`flex items-center text-[#F9F9F8] px-3 h-full font-bold rounded-[4px] bg-black hover:bg-black ${className}`}
+      type={type}
+      className={`flex items-center text-[#F9F9F8] px-3 h-full font-bold rounded-[4px] bg-blue-600 hover:bg-blue-700 ${className}`}
     >
       {children}
     </button>

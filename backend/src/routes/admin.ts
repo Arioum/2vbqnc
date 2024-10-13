@@ -4,6 +4,9 @@ import jwt from 'jsonwebtoken';
 import { check, validationResult } from 'express-validator';
 import bcrypt from 'bcryptjs';
 import verifyToken from '../middlewares/auth';
+import { getAllUsers, getDashboardDetails } from './dashboard';
+import { getTransactionData } from './transactions';
+import { deleteHotel, getAllBookings, getBookingsWithHotelDetails } from './extras';
 
 const router = express.Router();
 
@@ -130,5 +133,12 @@ router.post(
     }
   }
 );
+
+router.get('/dashboard', verifyToken, getDashboardDetails);
+router.get('/all-users', verifyToken, getAllUsers);
+router.get('/get-transactions', verifyToken, getTransactionData);
+router.delete('/delete-hotel/:hotelId', verifyToken, deleteHotel);
+router.get('/get-all-bookings', verifyToken, getAllBookings);
+router.get('/bookings-with-hotels', verifyToken, getBookingsWithHotelDetails);
 
 export default router;

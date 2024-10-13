@@ -10,6 +10,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useMutation } from "react-query";
 import * as apiClient from "../../api-client";
 import { useAppContext } from "../../contexts/AppContext";
+import Button from "../../components/ui/Button";
 
 type Props = {
   currentUser: UserType;
@@ -142,13 +143,13 @@ const BookingForm = ({ currentUser, paymentIntent }: Props) => {
       </div>
 
       <div className="flex justify-end">
-        <button
+        <Button
           disabled={isLoading}
           type="submit"
-          className="bg-[#33b249] text-white p-2 font-bold hover:bg-[#33c651] text-md disabled:bg-gray-500"
+          className="p-2 font-boldtext-md disabled:bg-gray-500"
         >
           {isLoading ? "Saving..." : "Confirm Booking"}
-        </button>
+        </Button>
       </div>
     </form>
   );

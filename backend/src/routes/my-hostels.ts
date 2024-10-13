@@ -1,10 +1,10 @@
-import express, { Request, Response } from "express";
-import multer from "multer";
-import cloudinary from "cloudinary";
-import Hotel from "../models/hotel";
-import { HotelType } from "../shared/types";
-import verifyToken from "../middlewares/auth";
-import { body } from "express-validator";
+import express, { Request, Response } from 'express';
+import multer from 'multer';
+import cloudinary from 'cloudinary';
+import { Hotel } from '../models/hotel';
+import { HotelType } from '../shared/types';
+import verifyToken from '../middlewares/auth';
+import { body } from 'express-validator';
 
 const router = express.Router();
 
@@ -18,24 +18,24 @@ const upload = multer({
 
 // api/my-hotels
 router.post(
-  "/",
+  '/',
   verifyToken,
   [
-    body("name").notEmpty().withMessage("Name is required"),
-    body("city").notEmpty().withMessage("City is required"),
-    body("country").notEmpty().withMessage("Country is required"),
-    body("description").notEmpty().withMessage("Description is required"),
-    body("type").notEmpty().withMessage("Type is required"),
-    body("pricePerNight")
+    body('name').notEmpty().withMessage('Name is required'),
+    body('city').notEmpty().withMessage('City is required'),
+    body('country').notEmpty().withMessage('Country is required'),
+    body('description').notEmpty().withMessage('Description is required'),
+    body('type').notEmpty().withMessage('Type is required'),
+    body('pricePerNight')
       .notEmpty()
       .isNumeric()
-      .withMessage("Price per night is required and must be number"),
-    body("facilities")
+      .withMessage('Price per night is required and must be number'),
+    body('facilities')
       .notEmpty()
       .isArray()
-      .withMessage("Facilities are required"),
+      .withMessage('Facilities are required'),
   ],
-  upload.array("imageFiles", 6), // image array upto 6 files
+  upload.array('imageFiles', 6), // image array upto 6 files
   async (req: Request, res: Response) => {
     try {
       const imageFiles = req.files as Express.Multer.File[]; // image files
@@ -54,22 +54,22 @@ router.post(
       // 4. return a 201 status code
       res.status(201).send(hotel);
     } catch (err) {
-      console.log("Error creating hotel", err);
-      res.status(500).json({ message: "Something went wrong" });
+      console.log('Error creating hotel', err);
+      res.status(500).json({ message: 'Something went wrong' });
     }
   }
 );
 
-router.get("/", verifyToken, async (req: Request, res: Response) => {
+router.get('/', verifyToken, async (req: Request, res: Response) => {
   try {
     const hotels = await Hotel.find({ userId: req.userId });
     res.json(hotels);
   } catch (err) {
-    res.status(500).json({ message: "Error fetching hotels" });
+    res.status(500).json({ message: 'Error fetching hotels' });
   }
 });
 
-router.get("/:id", verifyToken, async (req: Request, res: Response) => {
+router.get('/:id', verifyToken, async (req: Request, res: Response) => {
   const id = req.params.id.toString();
   try {
     const hotel = await Hotel.findOne({
@@ -79,14 +79,14 @@ router.get("/:id", verifyToken, async (req: Request, res: Response) => {
 
     res.json(hotel);
   } catch (err) {
-    res.status(500).json({ message: "Error fetching hotels" });
+    res.status(500).json({ message: 'Error fetching hotels' });
   }
 });
 
 router.put(
-  "/:hotelId",
+  '/:hotelId',
   verifyToken,
-  upload.array("imageFiles"),
+  upload.array('imageFiles'),
   async (req: Request, res: Response) => {
     try {
       const updatedHotel: HotelType = req.body;
@@ -104,7 +104,7 @@ router.put(
       );
 
       if (!hotel) {
-        return res.status(404).json({ message: "Hotel not found" });
+        return res.status(404).json({ message: 'Hotel not found' });
       }
       const files = req.files as Express.Multer.File[];
       const updatedImageUrls = await uploadImages(files);
@@ -117,15 +117,15 @@ router.put(
       await hotel.save();
       res.status(201).json(hotel);
     } catch (err) {
-      res.status(500).json({ message: "Something went wrong" });
+      res.status(500).json({ message: 'Something went wrong' });
     }
   }
 );
 
 async function uploadImages(imageFiles: Express.Multer.File[]) {
   const uploadPromises = imageFiles.map(async (image) => {
-    const b64 = Buffer.from(image.buffer).toString("base64"); // converting image into base64 and storing into buffer so that it can be uploaded to the cloudinary
-    let dataURI = "data:" + image.mimetype + ";base64," + b64;
+    const b64 = Buffer.from(image.buffer).toString('base64'); // converting image into base64 and storing into buffer so that it can be uploaded to the cloudinary
+    let dataURI = 'data:' + image.mimetype + ';base64,' + b64;
     const res = await cloudinary.v2.uploader.upload(dataURI);
     return res.url;
   });

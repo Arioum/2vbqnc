@@ -3,7 +3,7 @@ import './db/connection';
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import userRoutes from './routes/users';
-import adminRoutes from './routes/admin'
+import adminRoutes from './routes/admin';
 import authRoutes from './routes/auth';
 import cookieParser from 'cookie-parser';
 import path from 'path';
@@ -31,7 +31,7 @@ app.use(
       if (!origin || allowedOrigins.indexOf(origin) !== -1) {
         callback(null, true);
       } else {
-        callback(new Error("Not allowed by CORS"));
+        callback(new Error('Not allowed by CORS'));
       }
     },
     credentials: true, // allow credentials like cookies to be sent

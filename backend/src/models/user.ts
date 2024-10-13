@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now },
 });
 
 const adminSchema = new mongoose.Schema({
@@ -14,6 +15,7 @@ const adminSchema = new mongoose.Schema({
   password: { type: String, required: true },
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now },
 });
 
 userSchema.pre('save', async function (next) {

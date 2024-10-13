@@ -10,7 +10,7 @@ const GuestSection = () => {
   return (
     <div>
       <h1 className="text-2xl font-bold mb-3">Guests</h1>
-      <div className="grid grid-cols-2 p-6 gap-5 bg-gray-300">
+      <div className="grid grid-cols-2 gap-5">
         <label className="text-gray-700 text-sm font-semibold">
           Adults
           <input

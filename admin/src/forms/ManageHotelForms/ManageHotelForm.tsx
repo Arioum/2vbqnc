@@ -6,6 +6,7 @@ import GuestSection from "./GuestSection";
 import ImagesSection from "./ImagesSection";
 import { HotelType } from "../../../../backend/src/shared/types";
 import { useEffect } from "react";
+import Button from "../../components/ui/Button";
 
 export type HotelFormData = {
   name: string;
@@ -25,18 +26,19 @@ export type HotelFormData = {
 type Props = {
   hotel?: HotelType;
   onSave: (HotelFormData: FormData) => void;
+  onDelete: (hotelId: string) => void; // New onDelete handler
   isLoading: boolean;
 };
-const ManageHotelForm = ({ onSave, isLoading, hotel }: Props) => {
+
+const ManageHotelForm = ({ onSave, onDelete, isLoading, hotel }: Props) => {
   const formMethods = useForm<HotelFormData>();
   const { handleSubmit, reset } = formMethods;
 
   useEffect(() => {
     reset(hotel);
-  }, [hotel, reset]); // every time hotel data changes
+  }, [hotel, reset]); // Reset form when hotel changes
 
   const onSubmit = handleSubmit((formDataJson: HotelFormData) => {
-    // create new FormData object and call our API
     const formData = new FormData();
     if (hotel) {
       formData.append("hotelId", hotel._id);
@@ -68,6 +70,13 @@ const ManageHotelForm = ({ onSave, isLoading, hotel }: Props) => {
 
     onSave(formData);
   });
+
+  const handleDelete = () => {
+    if (hotel) {
+      onDelete(hotel._id); // Call onDelete with hotel ID
+    }
+  };
+
   return (
     <FormProvider {...formMethods}>
       <form className="flex flex-col gap-10" onSubmit={onSubmit}>
@@ -76,15 +85,26 @@ const ManageHotelForm = ({ onSave, isLoading, hotel }: Props) => {
         <FacilitiesSection />
         <GuestSection />
         <ImagesSection />
-        <span className="flex justify-end">
-          <button
-            disabled={isLoading} // cant't submit the form while previous request is taking time
+        <div className="flex justify-end items-center gap-4">
+          {/* Conditionally show Delete button if hotel exists */}
+          {hotel && (
+            <Button
+              type="button"
+              onClick={handleDelete}
+              disabled={isLoading}
+              className="flex items-center text-[#F9F9F8] p-3 px-8 h-full font-bold rounded-[4px] bg-red-600 hover:bg-red-700 disabled:bg-gray-300"
+            >
+              {isLoading ? "Deleting..." : "Delete"}
+            </Button>
+          )}
+          <Button
+            disabled={isLoading}
             type="submit"
-            className="bg-[#33b249] text-[#F9F9F8] p-2 font-bold hover:bg-[#33c651] text-xl disabled:bg-gray-500"
+            className="flex items-center text-[#F9F9F8] p-3 px-8 h-full font-bold rounded-[4px] bg-blue-600 hover:bg-blue-700 disabled:bg-gray-500"
           >
             {isLoading ? "Saving..." : "Save"}
-          </button>
-        </span>
+          </Button>
+        </div>
       </form>
     </FormProvider>
   );

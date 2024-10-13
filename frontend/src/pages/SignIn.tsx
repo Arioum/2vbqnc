@@ -3,16 +3,30 @@ import { useMutation, useQueryClient } from "react-query";
 import * as apiClient from "../api-client";
 import { useAppContext } from "../contexts/AppContext";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import Button from "../components/ui/Button";
+import { useEffect } from "react";
+
 export type SignInFormData = {
   email: string;
   password: string;
 };
 
 const SignIn = () => {
-  const { showToast } = useAppContext();
+  const { showToast, isLoggedIn } = useAppContext(); // Destructure isLoggedIn
   const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    // Redirect if already logged in
+    if (isLoggedIn) {
+      navigate("/");
+    }
+  }, [isLoggedIn, navigate]);
+
+  // If the user is logged in, do not render anything
+  if (isLoggedIn) {
+    return null; // Ensure nothing is rendered
+  }
+
   const {
     register,
     formState: { errors },
@@ -21,25 +35,23 @@ const SignIn = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation(apiClient.signIn, {
     onSuccess: async () => {
-      // 1. show the tost
-      // 2. navigate to the home page
-      queryClient.invalidateQueries("validateToken"); // forcefully validate so that we don't need to refresh
+      queryClient.invalidateQueries("validateToken");
       showToast({ message: "Sign in Successful!", type: "SUCCESS" });
       navigate(location.state?.from?.pathname || "/");
     },
     onError: (err: Error) => {
-      //1. toast
       showToast({ message: err.message, type: "ERROR" });
+      navigate("/sign-in");
     },
   });
 
   const onSubmit = handleSubmit((data) => {
     mutation.mutate(data);
   });
+
   return (
     <form className="max-w-[400px] mx-auto flex flex-col gap-5" onSubmit={onSubmit}>
       <h2 className="text-3xl font-bold">Sign In</h2>
-
       <label className="text-gray-700 text-sm font-bold flex-1">
         Email
         <input

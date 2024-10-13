@@ -3,6 +3,7 @@ import DatePicker from "react-datepicker";
 import { useSearchContext } from "../../contexts/SearchContext";
 import { useAppContext } from "../../contexts/AppContext";
 import { useLocation, useNavigate } from "react-router-dom";
+import Button from "../../components/ui/Button";
 
 type Props = {
   hotelId: string;
@@ -55,7 +56,7 @@ const GuestInfoForm = ({ hotelId, pricePerNight }: Props) => {
   };
 
   return (
-    <div className="flex flex-col p-4 bg-slate-300 gap-4 rounded-sm">
+    <div className="flex flex-col p-4 gap-4 border rounded-[8px] bg-slate-200">
       <h3 className="text-md font-bold">&#8377;{pricePerNight.toLocaleString()}/night</h3>
       <form onSubmit={isLoggedIn ? handleSubmit(onSubmit) : handleSubmit(onSignInClick)}>
         <div className="grid grid-cols-1 gap-4 items-center">
@@ -93,7 +94,7 @@ const GuestInfoForm = ({ hotelId, pricePerNight }: Props) => {
             <label className="items-center flex">
               Adults:
               <input
-                className="w-full p-1 focus:outline-none font-bold"
+                className="w-full p-1 focus:outline-none font-bold bg-transparent"
                 type="number"
                 min={1}
                 max={20}
@@ -110,7 +111,7 @@ const GuestInfoForm = ({ hotelId, pricePerNight }: Props) => {
             <label className="items-center flex">
               Children:
               <input
-                className="w-full p-1 focus:outline-none font-bold"
+                className="w-full p-1 focus:outline-none font-bold bg-transparent"
                 type="number"
                 min={0}
                 max={20}
@@ -124,19 +125,13 @@ const GuestInfoForm = ({ hotelId, pricePerNight }: Props) => {
             )}
           </div>
           {isLoggedIn ? (
-            <button
-              type="submit"
-              className="bg-[#33b249] text-[#F9F9F8] h-full p-2 font-bold hover:bg-[#33c651] text-xl"
-            >
+            <Button type="submit" className="text-[#F9F9F8] justify-center h-full p-2 font-bold text-xl">
               Book Now
-            </button>
+            </Button>
           ) : (
-            <button
-              type="submit"
-              className="bg-[#33b249] text-[#F9F9F8] h-full p-2 font-bold hover:bg-[#33c651] text-xl"
-            >
+            <Button type="submit" className="text-[#F9F9F8] justify-center h-full p-2 font-bold text-xl">
               Sign in to Book
-            </button>
+            </Button>
           )}
         </div>
       </form>

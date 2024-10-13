@@ -1,3 +1,4 @@
+import { useEffect } from "react"; // Import useEffect
 import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "react-query";
 import * as apiClient from "../api-client";
@@ -10,7 +11,7 @@ export type SignInFormData = {
 };
 
 const SignIn = () => {
-  const { showToast } = useAppContext();
+  const { showToast, isLoggedIn } = useAppContext(); // Get isLoggedIn from context
   const navigate = useNavigate();
   const location = useLocation();
   const {
@@ -21,14 +22,14 @@ const SignIn = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation(apiClient.signIn, {
     onSuccess: async () => {
-      // 1. show the tost
+      // 1. show the toast
       // 2. navigate to the home page
       queryClient.invalidateQueries("validateToken"); // forcefully validate so that we don't need to refresh
       showToast({ message: "Sign in Successful!", type: "SUCCESS" });
       navigate(location.state?.from?.pathname || "/dashboard");
     },
     onError: (err: Error) => {
-      //1. toast
+      // 1. toast
       showToast({ message: err.message, type: "ERROR" });
     },
   });
@@ -36,6 +37,14 @@ const SignIn = () => {
   const onSubmit = handleSubmit((data) => {
     mutation.mutate(data);
   });
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/dashboard"); // Redirect to the dashboard
+    }
+  }, [isLoggedIn, navigate]);
+
   return (
     <form className="max-w-[400px] mx-auto flex flex-col gap-5" onSubmit={onSubmit}>
       <h2 className="text-3xl font-bold">Sign In</h2>

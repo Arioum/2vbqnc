@@ -1,11 +1,15 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { useAppContext } from "./contexts/AppContext";
-import MyHotels from "./pages/MyHotels";
 import Layout from "./layout/Layout";
 import Register from "./pages/Register";
 import SignIn from "./pages/SignIn";
 import AddHotel from "./pages/AddHotel";
 import EditHotel from "./pages/EditHotel";
+import DashBoard from "./pages/DashBoard";
+import AllUsers from "./pages/AllUsers";
+import Sales from "./pages/Sales";
+import AllListings from "./pages/AllListings";
+import Bookings from "./pages/Bookings";
 
 const App = () => {
   const { isLoggedIn } = useAppContext();
@@ -29,14 +33,7 @@ const App = () => {
             </Layout>
           }
         />
-        <Route
-          path="/dashboard"
-          element={
-            <Layout>
-              <MyHotels />
-            </Layout>
-          }
-        />
+
         {/* <Route
           path="/detail/:hotelId"
           element={
@@ -48,6 +45,22 @@ const App = () => {
 
         {isLoggedIn && (
           <>
+            <Route
+              path="/dashboard"
+              element={
+                <Layout>
+                  <DashBoard />
+                </Layout>
+              }
+            />
+            <Route
+              path="/all-users"
+              element={
+                <Layout>
+                  <AllUsers />
+                </Layout>
+              }
+            />
             <Route
               path="/add-hotel"
               element={
@@ -68,7 +81,23 @@ const App = () => {
               path="/all-listings"
               element={
                 <Layout>
-                  <MyHotels />
+                  <AllListings />
+                </Layout>
+              }
+            />
+            <Route
+              path="/bookings"
+              element={
+                <Layout>
+                  <Bookings />
+                </Layout>
+              }
+            />
+            <Route
+              path="/sales"
+              element={
+                <Layout>
+                  <Sales />
                 </Layout>
               }
             />
