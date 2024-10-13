@@ -1,8 +1,9 @@
+import 'dotenv/config';
+import './db/connection';
 import express, { Request, Response } from 'express';
 import cors from 'cors';
-import 'dotenv/config';
-import mongoose from 'mongoose';
 import userRoutes from './routes/users';
+import adminRoutes from './routes/admin'
 import authRoutes from './routes/auth';
 import cookieParser from 'cookie-parser';
 import path from 'path';
@@ -17,22 +18,29 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-mongoose.connect(process.env.MONGODB_CONNECTION_STRING as string); // write this line on the top of index file as server will crash if it will not work
-
 const app = express(); // creating an app
 app.use(cookieParser()); // use cookie parser to parse or read the cookie
 app.use(express.json()); // body of Api will convert into json
 app.use(express.urlencoded({ extended: true })); // for parsing the url(params etc)
+
+const allowedOrigins = [process.env.FRONTEND_URL, process.env.ADMIN_URL];
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL, // server will accept request from this url
-    credentials: true,
+    origin: function (origin, callback) {
+      // If the origin is in the allowedOrigins array or it's undefined (for non-browser clients), allow it
+      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true, // allow credentials like cookies to be sent
   })
-); // browser prevents frontend on backend run on different ports
-
+);
 app.use(express.static(path.join(__dirname, '../../frontend/dist'))); // express can serve static assets
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/admin', adminRoutes);
 app.use('/api/my-hotels', myHotelRoutes);
 app.use('/api/hotels', hotelRoutes);
 app.use('/api/my-bookings', bookingRoutes);

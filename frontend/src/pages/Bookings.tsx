@@ -50,6 +50,8 @@ const Booking = () => {
     "fetchCurrentUser",
     apiClient.fetchCurrentUser
   );
+  console.log("currentUser", currentUser, "paymentIntentData", paymentIntentData);
+  
 
   if (!hotel) {
     return <></>;

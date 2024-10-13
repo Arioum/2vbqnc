@@ -45,35 +45,19 @@ const GuestInfoForm = ({ hotelId, pricePerNight }: Props) => {
   maxDate.setFullYear(maxDate.getFullYear() + 1);
 
   const onSignInClick = (data: GuestInfoFormData) => {
-    search.saveSearchValues(
-      "",
-      data.checkIn,
-      data.checkOut,
-      data.adultCount,
-      data.childCount
-    );
+    search.saveSearchValues("", data.checkIn, data.checkOut, data.adultCount, data.childCount);
     navigate("/sign-in", { state: { from: location } });
   };
 
   const onSubmit = (data: GuestInfoFormData) => {
-    search.saveSearchValues(
-      "",
-      data.checkIn,
-      data.checkOut,
-      data.adultCount,
-      data.childCount
-    );
+    search.saveSearchValues("", data.checkIn, data.checkOut, data.adultCount, data.childCount);
     navigate(`/hotel/${hotelId}/booking`);
   };
 
   return (
     <div className="flex flex-col p-4 bg-slate-300 gap-4 rounded-sm">
       <h3 className="text-md font-bold">&#8377;{pricePerNight.toLocaleString()}/night</h3>
-      <form
-        onSubmit={
-          isLoggedIn ? handleSubmit(onSubmit) : handleSubmit(onSignInClick)
-        }
-      >
+      <form onSubmit={isLoggedIn ? handleSubmit(onSubmit) : handleSubmit(onSignInClick)}>
         <div className="grid grid-cols-1 gap-4 items-center">
           <div>
             <DatePicker
@@ -136,17 +120,21 @@ const GuestInfoForm = ({ hotelId, pricePerNight }: Props) => {
               />
             </label>
             {errors.adultCount && (
-              <span className="text-red-500 font-semibold text-sm">
-                {errors.adultCount.message}
-              </span>
+              <span className="text-red-500 font-semibold text-sm">{errors.adultCount.message}</span>
             )}
           </div>
           {isLoggedIn ? (
-            <button className="bg-[#33b249] text-[#F9F9F8] h-full p-2 font-bold hover:bg-[#33c651] text-xl">
+            <button
+              type="submit"
+              className="bg-[#33b249] text-[#F9F9F8] h-full p-2 font-bold hover:bg-[#33c651] text-xl"
+            >
               Book Now
             </button>
           ) : (
-            <button className="bg-[#33b249] text-[#F9F9F8] h-full p-2 font-bold hover:bg-[#33c651] text-xl">
+            <button
+              type="submit"
+              className="bg-[#33b249] text-[#F9F9F8] h-full p-2 font-bold hover:bg-[#33c651] text-xl"
+            >
               Sign in to Book
             </button>
           )}

@@ -6,6 +6,14 @@ export type UserType = {
   lastName: string;
 };
 
+export type AdminType = {
+  _id: string;
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+};
+
 export type HotelType = {
   _id: string;
   userId: string;

@@ -4,6 +4,7 @@ import { MdTravelExplore } from "react-icons/md";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useNavigate } from "react-router-dom";
+// import { VscDebugRestart } from "react-icons/vsc";
 
 const SearchBar = () => {
   const search = useSearchContext();
@@ -17,22 +18,13 @@ const SearchBar = () => {
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
-    search.saveSearchValues(
-      destination,
-      checkIn,
-      checkOut,
-      adultCount,
-      childCount
-    );
+    search.saveSearchValues(destination, checkIn, checkOut, adultCount, childCount);
     navigate("/search");
   };
 
-  
   const minDate = new Date();
   const maxDate = new Date();
   maxDate.setFullYear(maxDate.getFullYear() + 1);
-
-
 
   // const clearSearch = () => {
   //   setDestination("");
@@ -40,37 +32,31 @@ const SearchBar = () => {
   //   setCheckOut(minDate);
   //   setAdultCount(1);
   //   setChildCount(1);
-  //   search.saveSearchValues(
-  //     destination,
-  //     checkIn,
-  //     checkOut,
-  //     adultCount,
-  //     childCount
-  //   );
-  //   navigate("/search");
-  // }
+  //   search.saveSearchValues(destination, checkIn, checkOut, adultCount, childCount);
 
+  //   navigate("/search");
+  // };
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="-mt-8 p-3 bg-orange-400 rounded shadow-md grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5 items-center gap-4"
+      className="-mt-14 p-3 bg-white rounded-[8px] shadow-md grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5 items-center gap-4"
     >
-      <div className="flex flex-row items-center flex-1 bg-[#F9F9F8] p-2">
+      <div className="flex flex-row items-center flex-1 bg-slate-50 border rounded-[4px] p-2">
         <MdTravelExplore size={25} className="mr-2" />
         <input
           placeholder="Where are you going?"
-          className="text-md w-full focus:outline-none"
+          className="text-md w-full focus:outline-none bg-slate-50"
           value={destination}
           onChange={(event) => setDestination(event.target.value)}
         />
       </div>
 
-      <div className="flex bg-[#F9F9F8] px-2 py-1 gap-2">
+      <div className="flex bg-slate-50  border rounded-[4px] px-2 py-1 gap-2">
         <label className="items-center flex">
           Adults:
           <input
-            className="w-full p-1 focus:outline-none font-bold"
+            className="w-full p-1 focus:outline-none font-bold bg-slate-50"
             type="number"
             min={1}
             max={20}
@@ -81,7 +67,7 @@ const SearchBar = () => {
         <label className="items-center flex">
           Children
           <input
-            className="w-full p-1 focus:outline-none font-bold"
+            className="w-full p-1 focus:outline-none font-bold bg-slate-50"
             type="number"
             min={0}
             max={20}
@@ -100,7 +86,7 @@ const SearchBar = () => {
           minDate={minDate}
           maxDate={maxDate}
           placeholderText="Check-in Date"
-          className="min-w-full bg-[#F9F9F8] p-2 focus:outline-none "
+          className="min-w-full bg-slate-50 border rounded-[4px] p-2 focus:outline-none "
           wrapperClassName="min-w-full"
         />
       </div>
@@ -114,16 +100,22 @@ const SearchBar = () => {
           minDate={minDate}
           maxDate={maxDate}
           placeholderText="Check-out Date"
-          className="min-w-full bg-[#F9F9F8] p-2 focus:outline-none"
+          className="min-w-full bg-slate-50 border rounded-[4px] p-2 focus:outline-none"
           wrapperClassName="min-w-full"
         />
       </div>
-      <div className="flex gap-1">
-        <button type="submit" className="w-full bg-[#33b249] text-[#F9F9F8] h-full p-2 font-bold text-xl hover:bg-[#33c651]">
+      <div className="flex h-full gap-1">
+        <button
+          type="submit"
+          className="w-full text-white bg-blue-600 text-slabg-slate-50 border rounded-[4px] h-full p-2 font-bold text-xl hover:bg-blue-600"
+        >
           Search
         </button>
-        {/* <button onClick = {clearSearch} className="w-1/2 md:w-1/3 bg-red-600 text-[#F9F9F8] h-full p-2 font-bold text-xl hover:bg-red-500">
-          Clear
+        {/* <button
+          onClick={clearSearch}
+          className=" bg-red-600 text-slabg-slate-50 w-[50px] flex justify-center items-center rounded-[4px] h-full p-2 font-bold text-xl hover:bg-red-500"
+        >
+          <VscDebugRestart className="text-white"/>
         </button> */}
       </div>
     </form>

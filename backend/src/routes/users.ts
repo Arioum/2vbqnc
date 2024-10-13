@@ -1,34 +1,34 @@
-import express, { Request, Response } from "express";
-import User from "../models/user";
-import jwt from "jsonwebtoken";
-import { check, validationResult } from "express-validator";
-import verifyToken from "../middlewares/auth";
+import express, { Request, Response } from 'express';
+import { User } from '../models/user';
+import jwt from 'jsonwebtoken';
+import { check, validationResult } from 'express-validator';
+import verifyToken from '../middlewares/auth';
 
 const router = express.Router();
 
-router.get("/me", verifyToken, async (req: Request, res: Response) => {
+router.get('/me', verifyToken, async (req: Request, res: Response) => {
   const userId = req.userId;
 
   try {
-    const user = await User.findById(userId).select("-password");
+    const user = await User.findById(userId).select('-password');
     if (!user) {
-      return res.status(400).json({ message: "User not found" });
+      return res.status(400).json({ message: 'User not found' });
     }
     res.json(user);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "something went wrong" });
+    res.status(500).json({ message: 'something went wrong' });
   }
 });
 
 // /api/users/register
 router.post(
-  "/register",
+  '/register',
   [
-    check("firstName", "First Name is required").isString(),
-    check("lastName", "Last Name is required").isString(),
-    check("email", "Email is required").isEmail(),
-    check("password", "Password with 6 or more characters required").isLength({
+    check('firstName', 'First Name is required').isString(),
+    check('lastName', 'Last Name is required').isString(),
+    check('email', 'Email is required').isEmail(),
+    check('password', 'Password with 6 or more characters required').isLength({
       min: 6,
     }),
   ],
@@ -43,7 +43,7 @@ router.post(
       });
 
       if (user) {
-        res.status(400).json({ message: "User already exists" }); //bad request
+        res.status(400).json({ message: 'User already exists' }); //bad request
       }
 
       user = new User(req.body);
@@ -52,21 +52,21 @@ router.post(
         { userId: user.id },
         process.env.JWT_SECRET_KEY as string,
         {
-          expiresIn: "1d",
+          expiresIn: '1d',
         }
       );
 
-      res.cookie("auth_token", token, {
+      res.cookie('auth_token', token, {
         // name, token
         httpOnly: true, // can only be access on the server (you can access from the js code on the browser)
-        secure: process.env.NODE_ENV === "production", //accept cookies only on https(useful in production)
+        secure: process.env.NODE_ENV === 'production', //accept cookies only on https(useful in production)
         maxAge: 86400000,
       });
 
-      return res.status(200).send({ message: "User created Successfully" });
+      return res.status(200).send({ message: 'User created Successfully' });
     } catch (err) {
       console.log(err);
-      res.status(500).send({ message: "Something went wrong" });
+      res.status(500).send({ message: 'Something went wrong' });
       //don't return error message to frontend as it can have a sensitive information just log in the backend
     }
   }

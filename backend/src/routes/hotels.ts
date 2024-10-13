@@ -92,6 +92,8 @@ router.post(
   async (req: Request, res: Response) => {
     const { numberOfNights } = req.body;
     const hotelId = req.params.hotelId;
+    console.log(hotelId);
+    
 
     const hotel = await Hotel.findById(hotelId);
     if (!hotel) {
